@@ -1,0 +1,28 @@
+FROM openjdk:14-alpine AS build
+
+# Set the working directory in the container
+WORKDIR /app
+
+# Copy the pom.xml file to the container
+COPY pom.xml .
+
+# Copy the source code to the container
+COPY src/ /app/src/
+
+# Build the application
+RUN mvn clean package -DskipTests
+
+# Create a new image from the openjdk:14-alpine
+FROM openjdk:14-alpine
+
+# Set the working directory in the container
+WORKDIR /app
+
+# Copy the jar file from the build image to the new image
+COPY --from=build /app/target/*.jar app.jar
+
+# Expose the port that the application runs on
+EXPOSE 8080
+
+# Run the application
+CMD ["java", "-jar", "app.jar"]

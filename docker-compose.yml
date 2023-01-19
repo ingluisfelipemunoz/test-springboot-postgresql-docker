@@ -1,0 +1,26 @@
+version: '3'
+services:
+  web:
+    build:
+      context: .
+      args:
+        - MAVEN_OPTS=-DskipTests
+    ports:
+      - "8080:8080"
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/mydb
+      - SPRING_DATASOURCE_USERNAME=myuser
+      - SPRING_DATASOURCE_PASSWORD=mypassword
+    depends_on:
+      - db
+    volumes:
+      - .:/app
+    command: mvn spring-boot:run
+  db:
+    image: postgres:12.5
+    environment:
+      - POSTGRES_DB=mydb
+      - POSTGRES_USER=myuser
+      - POSTGRES_PASSWORD=mypassword
+    ports:
+      - "5432:5432"
